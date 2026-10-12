@@ -1,0 +1,11 @@
+{
+  "title": "MOBCAR",
+  "description": "This platform allows users to report traffic violations and irregularities, enhancing urban mobility and quality of life through community engagement.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
