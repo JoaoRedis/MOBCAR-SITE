@@ -18,7 +18,7 @@
   --mobcar-azul-escuro: #091626;
   --mobcar-azul-medio: #0E2440;
 
-  --font-size: 16px;
+  --font-size: 18px;
   --background: #F2F2F2;
   --foreground: #091626;
   --card: #ffffff;
@@ -205,43 +205,43 @@
   }
 
   h1 {
-    font-size: var(--text-2xl);
+    font-size: 34px;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h2 {
-    font-size: var(--text-xl);
+    font-size: 24px;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h3 {
-    font-size: var(--text-lg);
+    font-size: 24px;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h4 {
-    font-size: var(--text-base);
+    font-size: 18px;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   label {
-    font-size: var(--text-base);
+    font-size: 18px;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   button {
-    font-size: var(--text-base);
+    font-size: 18px;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   input {
-    font-size: var(--text-base);
+    font-size: 18px;
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }

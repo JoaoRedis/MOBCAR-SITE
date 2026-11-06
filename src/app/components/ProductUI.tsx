@@ -38,8 +38,8 @@ export function PageHeader({
         </Button>
       )}
       <Badge variant="secondary">{eyebrow}</Badge>
-      <div className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">{title}</div>
-      <div className="max-w-3xl text-base leading-relaxed text-muted-foreground">{description}</div>
+      <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">{title}</h1>
+      <p className="max-w-3xl text-base leading-relaxed text-muted-foreground">{description}</p>
     </div>
   );
 }

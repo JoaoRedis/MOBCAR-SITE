@@ -11,6 +11,7 @@ import { Label } from '../components/ui/label';
 import { Progress } from '../components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Textarea } from '../components/ui/textarea';
+import { regioesAdministrativas } from '../data/regioesAdministrativas';
 
 type Attachment = { name: string; size: number; type: string; error?: string };
 
@@ -18,15 +19,17 @@ const steps = ['Descrição', 'Localização', 'Evidências', 'Revisão'];
 
 export function Denunciar() {
   const [step, setStep] = useState(0);
+  const [stepAttempted, setStepAttempted] = useState(false);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [administrativeRegion, setAdministrativeRegion] = useState('');
   const [address, setAddress] = useState('');
   const [mapSelected, setMapSelected] = useState(false);
   const [files, setFiles] = useState<Attachment[]>([]);
   const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const locationReady = address.trim().length > 4 || mapSelected;
+  const locationReady = administrativeRegion !== '' && (address.trim().length > 4 || mapSelected);
   const stepValid = step === 0 ? description.trim().length >= 20 : step === 1 ? locationReady : true;
 
   const chooseFiles = (list: FileList | null) => {
@@ -90,7 +93,7 @@ export function Denunciar() {
         <PrototypeNotice />
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {steps.map((label, index) => (
-            <div key={label} className={`rounded-lg border p-3 text-sm ${index === step ? 'border-secondary bg-secondary/10 font-medium' : index < step ? 'bg-muted text-foreground' : 'text-muted-foreground'}`}>
+            <div key={label} aria-current={index === step ? 'step' : undefined} className={`rounded-lg border p-3 text-sm ${index === step ? 'border-secondary bg-secondary/10 font-medium' : index < step ? 'bg-muted text-foreground' : 'text-muted-foreground'}`}>
               <div className="mb-1 flex items-center gap-2">
                 <span className={`flex size-5 items-center justify-center rounded-full text-xs ${index <= step ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                   {index < step ? <Check className="size-3" /> : index + 1}
@@ -103,7 +106,7 @@ export function Denunciar() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle id="report-step-title" aria-live="polite" className="flex items-center gap-2">
               {step === 0 && <FileText />}{step === 1 && <MapPin />}{step === 2 && <FileImage />}{step === 3 && <CheckCircle2 />}
               {steps[step]}
             </CardTitle>
@@ -126,8 +129,8 @@ export function Denunciar() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="description">Descrição *</Label>
-                  <Textarea id="description" className="min-h-40" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descreva a possível ocorrência e o contexto observado." aria-invalid={description.length > 0 && description.trim().length < 20} />
-                  <div className={`text-xs ${description.length > 0 && description.trim().length < 20 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  <Textarea id="description" className="min-h-40" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descreva a possível ocorrência e o contexto observado." aria-invalid={stepAttempted && description.trim().length < 20} aria-describedby="description-help" />
+                  <div id="description-help" className={`text-xs ${stepAttempted && description.trim().length < 20 ? 'text-destructive' : 'text-muted-foreground'}`}>
                     Mínimo de 20 caracteres · {description.length} digitados
                   </div>
                 </div>
@@ -137,18 +140,32 @@ export function Denunciar() {
             {step === 1 && (
               <>
                 <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
-                  Informe um endereço ou selecione um ponto na prévia do mapa. Não é necessário usar os dois métodos.
+                  Selecione a Região Administrativa e informe um endereço ou selecione um ponto na prévia do mapa.
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Endereço ou ponto de referência</Label>
-                  <Input id="address" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Ex.: SQS 308, Asa Sul, Brasília — DF" />
+                  <Label htmlFor="administrative-region">Região Administrativa *</Label>
+                  <Select value={administrativeRegion} onValueChange={setAdministrativeRegion}>
+                    <SelectTrigger id="administrative-region" aria-required="true" aria-invalid={stepAttempted && !administrativeRegion}>
+                      <SelectValue placeholder="Selecione uma região do DF" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {regioesAdministrativas.map((region) => (
+                        <SelectItem key={region} value={region}>{region}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Endereço ou ponto de referência *</Label>
+                  <Input id="address" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Ex.: SQS 308, Asa Sul" aria-describedby="address-help" aria-invalid={stepAttempted && !mapSelected && address.trim().length <= 4} />
+                  <div id="address-help" className="text-xs text-muted-foreground">Obrigatório se você não marcar um ponto no mapa.</div>
                 </div>
                 <div className="space-y-3">
                   <MapPlaceholder selected={mapSelected} />
                   <Button variant="outline" onClick={() => setMapSelected((value) => !value)}>
                     <MapPin /> {mapSelected ? 'Remover ponto selecionado' : 'Selecionar ponto demonstrativo'}
                   </Button>
-                  {mapSelected && <div className="text-sm text-muted-foreground">Ponto selecionado: -15.8112, -47.9017 · ajuste demonstrativo</div>}
+                  {mapSelected && <div role="status" className="text-sm text-muted-foreground">Ponto selecionado: -15.8112, -47.9017 · localização demonstrativa</div>}
                 </div>
               </>
             )}
@@ -159,13 +176,13 @@ export function Denunciar() {
                   <div className="rounded-lg border p-4"><div className="font-medium">Imagens</div><div className="mt-1 text-sm text-muted-foreground">Máximo de 20 MB por arquivo</div></div>
                   <div className="rounded-lg border p-4"><div className="font-medium">Vídeos</div><div className="mt-1 text-sm text-muted-foreground">Máximo de 100 MB por arquivo</div></div>
                 </div>
-                <Label htmlFor="evidence" className="flex cursor-pointer flex-col rounded-xl border-2 border-dashed p-10 text-center hover:border-secondary">
+                <Label htmlFor="evidence" className="flex cursor-pointer flex-col rounded-xl border-2 border-dashed p-10 text-center hover:border-secondary focus-within:ring-2 focus-within:ring-ring">
                   <Upload className="mx-auto size-8 text-muted-foreground" />
                   <span className="mt-3 font-medium">Selecionar imagens ou vídeos</span>
                   <span className="mt-1 text-xs font-normal text-muted-foreground">Limites individuais; formatos dependem da definição técnica do projeto.</span>
                   <Input id="evidence" type="file" multiple accept="image/*,video/*" className="sr-only" onChange={(event) => chooseFiles(event.target.files)} />
                 </Label>
-                <div className="space-y-3">
+                <div className="space-y-3" aria-live="polite">
                   {files.map((file, index) => (
                     <div key={`${file.name}-${index}`} className={`flex items-center gap-4 rounded-lg border p-4 ${file.error ? 'border-destructive/40 bg-destructive/5' : ''}`}>
                       <FileImage className="size-5 text-muted-foreground" />
@@ -184,17 +201,30 @@ export function Denunciar() {
             {step === 3 && (
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-xl border p-5"><div className="text-sm font-medium">Descrição</div><div className="mt-2 text-sm text-muted-foreground">{description}</div>{category && <Badge className="mt-3" variant="outline">{category}</Badge>}</div>
-                <div className="rounded-xl border p-5"><div className="text-sm font-medium">Localização</div><div className="mt-2 text-sm text-muted-foreground">{address || 'Ponto selecionado no mapa'}{mapSelected && ' · -15.8112, -47.9017'}</div></div>
+                <div className="rounded-xl border p-5"><div className="text-sm font-medium">Localização</div><div className="mt-2 text-sm text-muted-foreground">{administrativeRegion} · {address || 'Ponto selecionado no mapa'}{mapSelected && ' · -15.8112, -47.9017'}</div></div>
                 <div className="rounded-xl border p-5 md:col-span-2"><div className="text-sm font-medium">Evidências</div><div className="mt-2 text-sm text-muted-foreground">{files.length ? `${files.length} arquivo(s) selecionado(s)` : 'Nenhuma evidência anexada'}</div></div>
                 <div className="rounded-xl bg-muted/60 p-5 text-sm text-muted-foreground md:col-span-2">A data e a hora do registro serão geradas automaticamente pelo sistema no envio.</div>
               </div>
             )}
 
-            {!stepValid && step === 1 && <div className="text-sm text-destructive">Informe um endereço ou selecione um ponto no mapa.</div>}
+            {stepAttempted && !stepValid && (
+              <div role="alert" className="text-sm text-destructive">
+                {step === 0
+                  ? 'Descreva a ocorrência com pelo menos 20 caracteres antes de continuar.'
+                  : 'Para continuar, selecione uma Região Administrativa e informe um endereço ou ponto no mapa.'}
+              </div>
+            )}
             <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-between">
-              <Button variant="outline" disabled={step === 0 || sending} onClick={() => setStep((current) => current - 1)}>Voltar</Button>
+              <Button variant="outline" disabled={step === 0 || sending} onClick={() => { setStepAttempted(false); setStep((current) => current - 1); }}>Voltar</Button>
               {step < 3 ? (
-                <Button disabled={!stepValid} onClick={() => setStep((current) => current + 1)}>Continuar</Button>
+                <Button onClick={() => {
+                  if (!stepValid) {
+                    setStepAttempted(true);
+                    return;
+                  }
+                  setStepAttempted(false);
+                  setStep((current) => current + 1);
+                }}>Continuar</Button>
               ) : (
                 <Button disabled={sending} onClick={submit}>{sending ? <><Loader2 className="animate-spin" /> Enviando…</> : 'Enviar registro'}</Button>
               )}

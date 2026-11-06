@@ -1,15 +1,16 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, MapPin, AlertCircle } from 'lucide-react';
+import { regioesAdministrativas } from '../data/regioesAdministrativas';
 
-const cidadesData = [
-  { cidade: 'São Paulo', denuncias: 3245 },
-  { cidade: 'Rio de Janeiro', denuncias: 2180 },
-  { cidade: 'Belo Horizonte', denuncias: 1560 },
-  { cidade: 'Brasília', denuncias: 1320 },
-  { cidade: 'Curitiba', denuncias: 980 },
-  { cidade: 'Porto Alegre', denuncias: 850 },
-  { cidade: 'Salvador', denuncias: 720 },
-  { cidade: 'Fortaleza', denuncias: 688 },
+const regioesData = [
+  { regiao: 'Ceilândia', denuncias: 3245 },
+  { regiao: 'Taguatinga', denuncias: 2180 },
+  { regiao: 'Samambaia', denuncias: 1560 },
+  { regiao: 'Plano Piloto', denuncias: 1320 },
+  { regiao: 'Gama', denuncias: 980 },
+  { regiao: 'Águas Claras', denuncias: 850 },
+  { regiao: 'Planaltina', denuncias: 720 },
+  { regiao: 'Guará', denuncias: 688 },
 ];
 
 const infracoesData = [
@@ -29,12 +30,12 @@ export function Estatisticas() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block bg-gradient-to-r from-[#D9A679] to-[#A67246] px-6 py-2 rounded-full mb-6">
-            <span className="text-white font-medium">Dados em Tempo Real</span>
+            <span className="text-white font-medium">Dados demonstrativos do DF</span>
           </div>
           <h1 className="text-5xl text-[#091626] mb-4">Estatísticas de Denúncias</h1>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Dados consolidados e transparentes sobre as denúncias registradas na plataforma.
-            Todas as informações são anônimas e agregadas.
+            Os números desta página são fictícios e servem apenas para demonstrar a visualização por Região Administrativa do Distrito Federal.
+            O ranking mostra oito regiões; não representa dados oficiais nem denúncias reais.
           </p>
         </div>
 
@@ -53,8 +54,8 @@ export function Estatisticas() {
                 <TrendingUp className="w-10 h-10 text-white" />
               </div>
             </div>
-            <div className="mt-6 flex items-center gap-2 text-sm text-green-600 font-medium">
-              <span className="text-lg">↑</span> 23% vs mês anterior
+            <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground font-medium">
+              Variação mensal ilustrativa
             </div>
           </div>
 
@@ -62,9 +63,9 @@ export function Estatisticas() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#A67246]/10 to-transparent rounded-bl-full"></div>
             <div className="flex items-center justify-between relative">
               <div>
-                <div className="text-gray-600 mb-3 font-medium">Cidades Atendidas</div>
+                <div className="text-gray-600 mb-3 font-medium">Regiões Administrativas</div>
                 <div className="text-5xl font-bold bg-gradient-to-r from-[#A67246] to-[#8B5A36] bg-clip-text text-transparent">
-                  87
+                  {regioesAdministrativas.length}
                 </div>
               </div>
               <div className="bg-gradient-to-br from-[#A67246] to-[#8B5A36] p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
@@ -72,7 +73,7 @@ export function Estatisticas() {
               </div>
             </div>
             <div className="mt-6 flex items-center gap-2 text-sm text-blue-600 font-medium">
-              <span className="text-lg">+</span> 5 novas cidades
+              Regiões informadas para o Distrito Federal
             </div>
           </div>
 
@@ -95,16 +96,16 @@ export function Estatisticas() {
           </div>
         </div>
 
-        {/* Ranking de Cidades */}
+        {/* Ranking das Regiões Administrativas */}
         <div className="bg-white rounded-2xl p-8 shadow-xl mb-12 border border-gray-100">
           <h2 className="text-2xl text-[#091626] mb-6 flex items-center gap-3">
             <div className="w-1 h-8 bg-gradient-to-b from-[#D9A679] to-[#A67246] rounded-full"></div>
-            Ranking de Cidades com Mais Denúncias
+            8 Regiões Administrativas com Mais Denúncias
           </h2>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={cidadesData}>
+            <BarChart data={regioesData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-              <XAxis dataKey="cidade" tick={{ fill: '#666' }} />
+              <XAxis dataKey="regiao" tick={{ fill: '#666' }} />
               <YAxis tick={{ fill: '#666' }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#fff', border: '1px solid #ddd', borderRadius: '8px' }}
@@ -114,6 +115,11 @@ export function Estatisticas() {
               <Bar dataKey="denuncias" fill="#D9A679" name="Denúncias" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
+          <ol className="sr-only" aria-label="Valores fictícios do ranking de regiões">
+            {regioesData.map((item) => (
+              <li key={item.regiao}>{item.regiao}: {item.denuncias.toLocaleString('pt-BR')} denúncias fictícias</li>
+            ))}
+          </ol>
         </div>
 
         {/* Tipos de Infrações */}

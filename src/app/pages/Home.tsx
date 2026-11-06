@@ -1,9 +1,10 @@
 import { Link } from 'react-router';
 import { ArrowRight, AlertTriangle, Users, Shield, BarChart2, ChevronRight } from 'lucide-react';
+import { regioesAdministrativas } from '../data/regioesAdministrativas';
 
 const indicators = [
   { value: '15.243', label: 'Registros demonstrativos', note: 'Dado ilustrativo', noteColor: 'text-[#2E7D32]' },
-  { value: '127', label: 'Cidades representadas', note: 'Dado ilustrativo', noteColor: 'text-[#0E2440]' },
+  { value: String(regioesAdministrativas.length), label: 'Regiões Administrativas', note: 'Distrito Federal', noteColor: 'text-[#0E2440]' },
   { value: '94%', label: 'Análises concluídas', note: 'Dado ilustrativo', noteColor: 'text-[#2E7D32]' },
   { value: '3min', label: 'Tempo estimado de envio', note: 'Estimativa ilustrativa', noteColor: 'text-[#F59E0B]' },
 ];

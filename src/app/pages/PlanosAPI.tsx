@@ -10,7 +10,7 @@ const planos = [
     requisicoes: '1.000',
     recursos: [
       'Acesso a dados públicos agregados',
-      'Estatísticas básicas por cidade',
+      'Estatísticas básicas por Região Administrativa',
       'Limite de 1.000 requisições/mês',
       'Suporte via documentação',
       'Rate limit: 10 req/min'

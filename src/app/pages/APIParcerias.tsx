@@ -8,7 +8,7 @@ const plans = [
     period: '/mês',
     desc: 'Para explorar a plataforma',
     limit: '100 req/dia',
-    features: ['100 requisições por dia', 'Dados agregados por cidade', 'Suporte por email', 'Documentação completa', 'Acesso sandbox'],
+    features: ['100 requisições por dia', 'Dados agregados por Região Administrativa', 'Suporte por email', 'Documentação completa', 'Acesso sandbox'],
     highlight: false,
     cta: 'Começar grátis',
   },
@@ -51,9 +51,9 @@ const useCases = [
   { icon: Zap, title: 'Seguradoras', desc: 'Empresas de seguro utilizam dados estatísticos para precificação baseada em risco por região.' },
 ];
 
-const codeExample = `// Exemplo: buscar denúncias por cidade
+const codeExample = `// Exemplo: buscar denúncias por Região Administrativa
 const response = await fetch(
-  'https://api.mobcar.com.br/v1/denuncias?cidade=São+Paulo&tipo=estacionamento',
+  'https://api.mobcar.com.br/v1/denuncias?regiao_administrativa=Ceilândia&tipo=estacionamento',
   {
     headers: {
       'Authorization': 'Bearer SEU_TOKEN_AQUI',

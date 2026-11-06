@@ -1,4 +1,5 @@
 import { Target, Eye, Heart, Users, Building2, Star, Shield } from 'lucide-react';
+import { regioesAdministrativas } from '../data/regioesAdministrativas';
 
 const values = [
   { icon: Shield, label: 'Transparência', desc: 'Todos os dados publicados são anonimizados e auditáveis pela comunidade.' },
@@ -63,7 +64,7 @@ export function SobreProjeto() {
               {[
                 { num: '2024', label: 'Ano de fundação' },
                 { num: '15k+', label: 'Denúncias registradas' },
-                { num: '127', label: 'Cidades atendidas' },
+                { num: String(regioesAdministrativas.length), label: 'Regiões Administrativas do DF' },
                 { num: '98%', label: 'Satisfação dos usuários' },
               ].map((stat) => (
                 <div key={stat.label} className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100">
