@@ -13,6 +13,7 @@ const team = [
   { name: 'Isaac Linhares', role: 'Engenheiro de Software', initials: 'IL' },
   { name: 'João Victor', role: 'UX Designer', initials: 'JV' },
   { name: 'Rafael Fernandes', role: 'Dados & Analytics', initials: 'RF' },
+  { name: 'Yuri Poley', role: 'Dados & Analytics', initials: 'YP' },
 ];
 
 const partners = [
@@ -50,7 +51,7 @@ export function SobreProjeto() {
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
-                  O Mobcar foi fundado em 2024 por um grupo de engenheiros e designers preocupados com o crescente número de acidentes e infrações de trânsito nas grandes cidades brasileiras.
+                  O Mobcar foi fundado em 2026 por um grupo de engenheiros e designers preocupados com o crescente número de acidentes e infrações de trânsito nas grandes cidades brasileiras.
                 </p>
                 <p>
                   A motivação surgiu de uma realidade comum: presenciar infrações graves e não ter um canal eficiente para reportá-las às autoridades competentes. O processo era burocrático, pouco acessível e sem retorno para o cidadão.
@@ -62,7 +63,7 @@ export function SobreProjeto() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { num: '2024', label: 'Ano de fundação' },
+                { num: '2026', label: 'Ano de fundação' },
                 { num: '15k+', label: 'Denúncias registradas' },
                 { num: String(regioesAdministrativas.length), label: 'Regiões Administrativas do DF' },
                 { num: '98%', label: 'Satisfação dos usuários' },
@@ -131,14 +132,27 @@ export function SobreProjeto() {
             <h2 className="text-3xl text-[#091626] mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>Equipe Responsável</h2>
             <p className="text-gray-600">Profissionais comprometidos com o impacto social positivo</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
             {team.map((member) => (
-              <div key={member.name} className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100">
-                <div className="w-16 h-16 bg-gradient-to-br from-[#D9A679] to-[#A67246] rounded-full flex items-center justify-center mx-auto mb-4">
+              <div
+                key={member.name}
+                tabIndex={0}
+                aria-label={`${member.name}, ${member.role}`}
+                className="group relative min-w-0 rounded-2xl border border-gray-100 bg-white px-3 py-5 text-center shadow-sm outline-none transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-[#A67246]"
+              >
+                <span
+                  role="tooltip"
+                  aria-hidden="true"
+                  className="pointer-events-none invisible absolute bottom-[calc(100%+0.5rem)] left-1/2 z-10 w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg bg-[#091626] px-3 py-2 text-xs leading-relaxed text-white opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-visible:visible group-focus-visible:opacity-100"
+                >
+                  {member.role}
+                </span>
+                <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#D9A679] to-[#A67246]">
                   <span className="text-white" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600 }}>{member.initials}</span>
                 </div>
-                <h4 className="text-[#091626] text-sm mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>{member.name}</h4>
-                <p className="text-gray-500 text-xs">{member.role}</p>
+                <h3 className="break-words text-sm font-medium leading-snug text-[#091626]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  {member.name}
+                </h3>
               </div>
             ))}
           </div>
