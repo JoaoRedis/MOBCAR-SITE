@@ -1,10 +1,8 @@
 import {
   defineConfig,
   mergeConfig,
-  type ConfigEnv,
   type HtmlTagDescriptor,
   type Plugin,
-  type UserConfig,
 } from 'vite'
 import path from 'node:path'
 
@@ -15,7 +13,7 @@ import userConfig from './vite.config'
 const FIGMA_ASSET_PREFIX = 'figma:asset/'
 
 export default defineConfig(async (env) =>
-  mergeConfig(await resolveUserConfig(env), {
+  mergeConfig(userConfig, {
     resolve: {
       alias: Object.entries<string>(packageAliases).map(([find, replacement]) => ({
         find,
@@ -47,10 +45,6 @@ export default defineConfig(async (env) =>
     },
   }),
 )
-
-async function resolveUserConfig(env: ConfigEnv): Promise<UserConfig> {
-  return typeof userConfig === 'function' ? await userConfig(env) : await userConfig
-}
 
 function figmaPackageSchemeResolver(): Plugin {
   return {

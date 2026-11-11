@@ -31,6 +31,8 @@ export function Denunciar() {
 
   const locationReady = administrativeRegion !== '' && (address.trim().length > 4 || mapSelected);
   const stepValid = step === 0 ? description.trim().length >= 20 : step === 1 ? locationReady : true;
+  const descriptionValid = description.trim().length >= 20;
+  const addressValid = address.trim().length > 4;
 
   const chooseFiles = (list: FileList | null) => {
     if (!list) return;
@@ -89,11 +91,12 @@ export function Denunciar() {
           eyebrow="Registro de ocorrência"
           title="Conte o que aconteceu"
           description="Organize descrição, localização e evidências em etapas. Você poderá revisar tudo antes do envio."
+          descriptionClassName="text-slate-700 dark:text-slate-300"
         />
         <PrototypeNotice />
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {steps.map((label, index) => (
-            <div key={label} aria-current={index === step ? 'step' : undefined} className={`rounded-lg border p-3 text-sm ${index === step ? 'border-secondary bg-secondary/10 font-medium' : index < step ? 'bg-muted text-foreground' : 'text-muted-foreground'}`}>
+            <div key={label} aria-current={index === step ? 'step' : undefined} className={`rounded-lg border p-3 text-sm ${index === step ? 'border-secondary bg-secondary/10 font-medium' : index < step ? 'bg-muted text-foreground' : 'text-slate-700 dark:text-slate-300'}`}>
               <div className="mb-1 flex items-center gap-2">
                 <span className={`flex size-5 items-center justify-center rounded-full text-xs ${index <= step ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                   {index < step ? <Check className="size-3" /> : index + 1}
@@ -115,9 +118,14 @@ export function Denunciar() {
             {step === 0 && (
               <>
                 <div className="space-y-2">
-                  <Label>Categoria da ocorrência</Label>
+                  <Label htmlFor="category" className="flex items-center gap-2">
+                    Categoria da ocorrência
+                    <span className="text-xs font-normal text-slate-600 dark:text-slate-300">Opcional</span>
+                  </Label>
                   <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger><SelectValue placeholder="Selecione, se aplicável" /></SelectTrigger>
+                    <SelectTrigger id="category" className={`h-11 border-slate-300 bg-white text-foreground placeholder:text-slate-500 transition-colors focus-visible:border-primary focus-visible:ring-primary/20 dark:border-border dark:bg-input-background ${category ? 'border-green-700 bg-green-50 dark:border-green-500 dark:bg-green-950/20' : ''}`}>
+                      <SelectValue placeholder="Selecione uma categoria, se aplicável" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="estacionamento">Estacionamento irregular</SelectItem>
                       <SelectItem value="sinalizacao">Desrespeito à sinalização</SelectItem>
@@ -125,13 +133,30 @@ export function Denunciar() {
                       <SelectItem value="outro">Outra situação</SelectItem>
                     </SelectContent>
                   </Select>
-                  <div className="text-xs text-muted-foreground">Campo mantido conforme o protótipo existente; opcional.</div>
+                  <div className="text-sm text-slate-700 dark:text-slate-300">Escolha a categoria que melhor descreve a situação. Você também pode deixar este campo em branco.</div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Descrição *</Label>
-                  <Textarea id="description" className="min-h-40" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descreva a possível ocorrência e o contexto observado." aria-invalid={stepAttempted && description.trim().length < 20} aria-describedby="description-help" />
-                  <div id="description-help" className={`text-xs ${stepAttempted && description.trim().length < 20 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                    Mínimo de 20 caracteres · {description.length} digitados
+                  <Label htmlFor="description">Descrição <span className="text-destructive" aria-hidden="true">*</span></Label>
+                  <p id="description-instructions" className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                    Informe o que aconteceu, quais veículos estão envolvidos e se existem condições que possam afetar o trânsito.
+                  </p>
+                  <Textarea
+                    id="description"
+                    className={`min-h-40 rounded-lg border-slate-300 bg-white text-foreground placeholder:text-slate-500 transition-colors focus-visible:border-primary focus-visible:ring-primary/20 dark:border-border dark:bg-input-background ${descriptionValid ? 'border-green-700 bg-green-50 dark:border-green-500 dark:bg-green-950/20' : ''} ${stepAttempted && !descriptionValid ? 'border-destructive bg-destructive/5 focus-visible:border-destructive focus-visible:ring-destructive/20' : ''}`}
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    placeholder="Descreva o que aconteceu..."
+                    aria-required="true"
+                    aria-invalid={stepAttempted && !descriptionValid}
+                    aria-describedby="description-instructions description-example description-help"
+                  />
+                  <div id="description-help" className={`text-sm ${stepAttempted && !descriptionValid ? 'text-destructive' : descriptionValid ? 'text-green-800 dark:text-green-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                    {stepAttempted && !descriptionValid
+                      ? 'A descrição precisa ter pelo menos 20 caracteres.'
+                      : `Mínimo de 20 caracteres · ${description.length} digitados`}
+                  </div>
+                  <div id="description-example" className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm leading-relaxed text-slate-700 dark:border-border dark:bg-muted/50 dark:text-slate-300">
+                    <span className="font-medium text-foreground">Exemplo:</span> “Um carro colidiu com uma motocicleta em um cruzamento. Os veículos estão ocupando uma das faixas e o trânsito está parcialmente bloqueado.”
                   </div>
                 </div>
               </>
@@ -143,9 +168,15 @@ export function Denunciar() {
                   Selecione a Região Administrativa e informe um endereço ou selecione um ponto na prévia do mapa.
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="administrative-region">Região Administrativa *</Label>
+                  <Label htmlFor="administrative-region">Região Administrativa <span className="text-destructive" aria-hidden="true">*</span></Label>
                   <Select value={administrativeRegion} onValueChange={setAdministrativeRegion}>
-                    <SelectTrigger id="administrative-region" aria-required="true" aria-invalid={stepAttempted && !administrativeRegion}>
+                    <SelectTrigger
+                      id="administrative-region"
+                      className={`h-11 border-slate-300 bg-white text-foreground transition-colors focus-visible:border-primary focus-visible:ring-primary/20 dark:border-border dark:bg-input-background ${administrativeRegion ? 'border-green-700 bg-green-50 dark:border-green-500 dark:bg-green-950/20' : ''} ${stepAttempted && !administrativeRegion ? 'border-destructive bg-destructive/5 focus-visible:border-destructive focus-visible:ring-destructive/20' : ''}`}
+                      aria-required="true"
+                      aria-invalid={stepAttempted && !administrativeRegion}
+                      aria-describedby={stepAttempted && !administrativeRegion ? 'region-error' : 'region-help'}
+                    >
                       <SelectValue placeholder="Selecione uma região do DF" />
                     </SelectTrigger>
                     <SelectContent>
@@ -154,11 +185,24 @@ export function Denunciar() {
                       ))}
                     </SelectContent>
                   </Select>
+                  {stepAttempted && !administrativeRegion
+                    ? <div id="region-error" className="text-sm text-destructive">Selecione uma Região Administrativa.</div>
+                    : <div id="region-help" className="text-sm text-slate-700 dark:text-slate-300">Escolha a região onde a ocorrência foi observada.</div>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Endereço ou ponto de referência *</Label>
-                  <Input id="address" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Ex.: SQS 308, Asa Sul" aria-describedby="address-help" aria-invalid={stepAttempted && !mapSelected && address.trim().length <= 4} />
-                  <div id="address-help" className="text-xs text-muted-foreground">Obrigatório se você não marcar um ponto no mapa.</div>
+                  <Label htmlFor="address">Endereço ou ponto de referência <span className="text-destructive" aria-hidden="true">*</span></Label>
+                  <Input
+                    id="address"
+                    className={`h-11 rounded-lg border-slate-300 bg-white text-foreground placeholder:text-slate-500 transition-colors focus-visible:border-primary focus-visible:ring-primary/20 dark:border-border dark:bg-input-background ${addressValid ? 'border-green-700 bg-green-50 dark:border-green-500 dark:bg-green-950/20' : ''} ${stepAttempted && !mapSelected && !addressValid ? 'border-destructive bg-destructive/5 focus-visible:border-destructive focus-visible:ring-destructive/20' : ''}`}
+                    value={address}
+                    onChange={(event) => setAddress(event.target.value)}
+                    placeholder="Ex.: SQS 308, Asa Sul"
+                    aria-describedby={stepAttempted && !mapSelected && !addressValid ? 'address-error' : 'address-help'}
+                    aria-invalid={stepAttempted && !mapSelected && !addressValid}
+                  />
+                  {stepAttempted && !mapSelected && !addressValid
+                    ? <div id="address-error" className="text-sm text-destructive">Informe um endereço com pelo menos 5 caracteres ou selecione um ponto no mapa.</div>
+                    : <div id="address-help" className="text-sm text-slate-700 dark:text-slate-300">Informe uma rua, número ou referência próxima. Obrigatório se não selecionar um ponto no mapa.</div>}
                 </div>
                 <div className="space-y-3">
                   <MapPlaceholder selected={mapSelected} />

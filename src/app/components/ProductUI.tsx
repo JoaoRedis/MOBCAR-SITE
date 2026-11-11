@@ -4,6 +4,7 @@ import type { OccurrenceStatus } from '../data/mock';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
+import { cn } from './ui/utils';
 
 const statusStyles: Record<OccurrenceStatus, string> = {
   Recebida: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -20,11 +21,13 @@ export function PageHeader({
   eyebrow,
   title,
   description,
+  descriptionClassName,
   backTo,
 }: {
   eyebrow: string;
   title: string;
   description: string;
+  descriptionClassName?: string;
   backTo?: string;
 }) {
   return (
@@ -39,7 +42,7 @@ export function PageHeader({
       )}
       <Badge variant="secondary">{eyebrow}</Badge>
       <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">{title}</h1>
-      <p className="max-w-3xl text-base leading-relaxed text-muted-foreground">{description}</p>
+      <p className={cn('max-w-3xl text-base leading-relaxed text-muted-foreground', descriptionClassName)}>{description}</p>
     </div>
   );
 }

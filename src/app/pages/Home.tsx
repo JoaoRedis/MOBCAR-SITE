@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
-import { ArrowRight, AlertTriangle, Users, Shield, BarChart2, ChevronRight } from 'lucide-react';
+import { ArrowRight, AlertTriangle, Users, Shield, BarChart2 } from 'lucide-react';
 import { regioesAdministrativas } from '../data/regioesAdministrativas';
+import balanceWatermark from '../../imports/balance-watermark.png';
 
 const indicators = [
   { value: '15.243', label: 'Registros demonstrativos', note: 'Dado ilustrativo', noteColor: 'text-[#2E7D32]' },
@@ -43,6 +44,12 @@ export function Home() {
       <section className="relative bg-gradient-to-br from-[#091626] via-[#0E2440] to-[#091626] text-white py-24 px-10 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D9A679] opacity-5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#A67246] opacity-5 rounded-full blur-3xl" />
+        <img
+          src={balanceWatermark}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[110%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.07] mix-blend-screen sm:h-[135%]"
+        />
 
         <div className="max-w-5xl mx-auto relative z-10 text-center">
           <div className="inline-block bg-[#D9A679]/10 border border-[#D9A679]/30 px-4 py-2 rounded-full mb-6">
@@ -60,7 +67,7 @@ export function Home() {
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
               to="/denunciar"
-              className="group inline-flex items-center gap-2 bg-gradient-to-r from-[#D9A679] to-[#A67246] text-white px-8 py-4 rounded-xl no-underline transition-all hover:opacity-90 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#D9A679]/20"
+              className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#D9A679] to-[#A67246] text-white px-8 py-4 rounded-xl no-underline transition-all hover:opacity-90 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#D9A679]/20"
               style={{ fontFamily: 'Poppins, sans-serif' }}
             >
               Fazer Denúncia
@@ -68,18 +75,19 @@ export function Home() {
             </Link>
             <Link
               to="/estatisticas"
-              className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-[#D9A679]/60 text-[#D9A679] px-8 py-4 rounded-xl no-underline transition-all hover:bg-[#D9A679]/10 hover:-translate-y-1"
+              className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#D9A679] to-[#A67246] text-white px-8 py-4 rounded-xl no-underline transition-all hover:opacity-90 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#D9A679]/20"
               style={{ fontFamily: 'Poppins, sans-serif' }}
             >
               Acompanhar dados
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               to="/como-funciona"
-              className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl no-underline transition-all hover:bg-white/10 hover:-translate-y-1"
+              className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#D9A679] to-[#A67246] text-white px-8 py-4 rounded-xl no-underline transition-all hover:opacity-90 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#D9A679]/20"
               style={{ fontFamily: 'Poppins, sans-serif' }}
             >
               Como Funciona
-              <ChevronRight className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
