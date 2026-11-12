@@ -62,7 +62,7 @@ export function Denunciar() {
 
   if (submitted) {
     return (
-      <div className="bg-background px-6 py-20">
+      <div className="mobcar-page mobcar-page--report bg-background px-6 py-20">
         <Card className="mx-auto max-w-xl text-center shadow-xl">
           <CardContent className="py-12">
             <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-green-50 text-green-700">
@@ -85,20 +85,39 @@ export function Denunciar() {
   }
 
   return (
-    <div className="bg-background px-6 py-12 md:py-16">
+    <div className="mobcar-page mobcar-page--report bg-background px-6 py-12 md:py-16">
       <div className="mx-auto max-w-5xl space-y-8">
-        <PageHeader
-          eyebrow="Registro de ocorrência"
-          title="Conte o que aconteceu"
-          description="Organize descrição, localização e evidências em etapas. Você poderá revisar tudo antes do envio."
-          descriptionClassName="text-slate-700 dark:text-slate-300"
-        />
+        <div className="mobcar-report-heading">
+          <PageHeader
+            eyebrow="Registro de ocorrência"
+            title="Conte o que aconteceu"
+            titleClassName="text-3xl font-semibold tracking-tight md:text-4xl"
+            description="Organize descrição, localização e evidências em etapas. Você poderá revisar tudo antes do envio."
+            descriptionClassName="mx-auto max-w-3xl text-sm text-muted-foreground sm:text-base"
+          />
+          <div className="mobcar-report-divider" aria-hidden="true">
+            <span />
+            <i />
+            <span />
+          </div>
+        </div>
         <PrototypeNotice />
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+        <div className="mobcar-report-steps grid grid-cols-2 gap-2 md:grid-cols-4">
           {steps.map((label, index) => (
-            <div key={label} aria-current={index === step ? 'step' : undefined} className={`rounded-lg border p-3 text-sm ${index === step ? 'border-secondary bg-secondary/10 font-medium' : index < step ? 'bg-muted text-foreground' : 'text-slate-700 dark:text-slate-300'}`}>
+            <div
+              key={label}
+              aria-current={index === step ? 'step' : undefined}
+              data-step-state={index === step ? 'active' : index < step ? 'complete' : 'upcoming'}
+              className={`rounded-lg border p-3 text-sm ${
+                index === step
+                  ? 'border-blue-300 bg-blue-50 font-semibold text-blue-950 dark:border-blue-700 dark:bg-blue-950/40 dark:text-blue-100'
+                  : index < step
+                    ? 'border-green-200 bg-green-50 font-medium text-green-900 dark:border-green-800 dark:bg-green-950/30 dark:text-green-200'
+                    : 'border-slate-200 bg-slate-100 text-slate-700 dark:border-border dark:bg-muted dark:text-slate-300'
+              }`}
+            >
               <div className="mb-1 flex items-center gap-2">
-                <span className={`flex size-5 items-center justify-center rounded-full text-xs ${index <= step ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                <span className={`flex size-5 items-center justify-center rounded-full text-xs ${index === step ? 'bg-blue-600 text-white' : index < step ? 'bg-green-700 text-white' : 'bg-slate-300 text-slate-700 dark:bg-slate-600 dark:text-slate-100'}`}>
                   {index < step ? <Check className="size-3" /> : index + 1}
                 </span>
                 {label}
@@ -107,18 +126,18 @@ export function Denunciar() {
           ))}
         </div>
 
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle id="report-step-title" aria-live="polite" className="flex items-center gap-2">
-              {step === 0 && <FileText />}{step === 1 && <MapPin />}{step === 2 && <FileImage />}{step === 3 && <CheckCircle2 />}
+        <Card className="mobcar-report-form">
+          <CardHeader className="px-7 pt-7 md:px-8 md:pt-8">
+            <CardTitle id="report-step-title" aria-live="polite" className="flex items-center gap-3 text-xl font-semibold md:text-2xl">
+              {step === 0 && <FileText className="size-5 md:size-6" />}{step === 1 && <MapPin className="size-5 md:size-6" />}{step === 2 && <FileImage className="size-5 md:size-6" />}{step === 3 && <CheckCircle2 className="size-5 md:size-6" />}
               {steps[step]}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-7 px-7 md:px-8 [&:last-child]:pb-8">
             {step === 0 && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="category" className="flex items-center gap-2">
+                  <Label htmlFor="category" className="flex items-center gap-2 text-base font-semibold">
                     Categoria da ocorrência
                     <span className="text-xs font-normal text-slate-600 dark:text-slate-300">Opcional</span>
                   </Label>
@@ -133,11 +152,11 @@ export function Denunciar() {
                       <SelectItem value="outro">Outra situação</SelectItem>
                     </SelectContent>
                   </Select>
-                  <div className="text-sm text-slate-700 dark:text-slate-300">Escolha a categoria que melhor descreve a situação. Você também pode deixar este campo em branco.</div>
+                  <div className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">Escolha a categoria que melhor descreve a situação. Você também pode deixar este campo em branco.</div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Descrição <span className="text-destructive" aria-hidden="true">*</span></Label>
-                  <p id="description-instructions" className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                  <Label htmlFor="description" className="text-base font-semibold">Descrição <span className="text-destructive" aria-hidden="true">*</span></Label>
+                  <p id="description-instructions" className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                     Informe o que aconteceu, quais veículos estão envolvidos e se existem condições que possam afetar o trânsito.
                   </p>
                   <Textarea
@@ -155,8 +174,8 @@ export function Denunciar() {
                       ? 'A descrição precisa ter pelo menos 20 caracteres.'
                       : `Mínimo de 20 caracteres · ${description.length} digitados`}
                   </div>
-                  <div id="description-example" className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm leading-relaxed text-slate-700 dark:border-border dark:bg-muted/50 dark:text-slate-300">
-                    <span className="font-medium text-foreground">Exemplo:</span> “Um carro colidiu com uma motocicleta em um cruzamento. Os veículos estão ocupando uma das faixas e o trânsito está parcialmente bloqueado.”
+                  <div id="description-example" className="rounded-md border border-sky-200 bg-sky-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-sky-900 dark:bg-sky-950/30 dark:text-slate-200">
+                    <span className="font-semibold text-sky-900 dark:text-sky-200">Exemplo:</span> “Um carro colidiu com uma motocicleta em um cruzamento. Os veículos estão ocupando uma das faixas e o trânsito está parcialmente bloqueado.”
                   </div>
                 </div>
               </>
@@ -168,7 +187,7 @@ export function Denunciar() {
                   Selecione a Região Administrativa e informe um endereço ou selecione um ponto na prévia do mapa.
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="administrative-region">Região Administrativa <span className="text-destructive" aria-hidden="true">*</span></Label>
+                  <Label htmlFor="administrative-region" className="text-base font-semibold">Região Administrativa <span className="text-destructive" aria-hidden="true">*</span></Label>
                   <Select value={administrativeRegion} onValueChange={setAdministrativeRegion}>
                     <SelectTrigger
                       id="administrative-region"
@@ -187,10 +206,10 @@ export function Denunciar() {
                   </Select>
                   {stepAttempted && !administrativeRegion
                     ? <div id="region-error" className="text-sm text-destructive">Selecione uma Região Administrativa.</div>
-                    : <div id="region-help" className="text-sm text-slate-700 dark:text-slate-300">Escolha a região onde a ocorrência foi observada.</div>}
+                    : <div id="region-help" className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">Escolha a região onde a ocorrência foi observada.</div>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Endereço ou ponto de referência <span className="text-destructive" aria-hidden="true">*</span></Label>
+                  <Label htmlFor="address" className="text-base font-semibold">Endereço ou ponto de referência <span className="text-destructive" aria-hidden="true">*</span></Label>
                   <Input
                     id="address"
                     className={`h-11 rounded-lg border-slate-300 bg-white text-foreground placeholder:text-slate-500 transition-colors focus-visible:border-primary focus-visible:ring-primary/20 dark:border-border dark:bg-input-background ${addressValid ? 'border-green-700 bg-green-50 dark:border-green-500 dark:bg-green-950/20' : ''} ${stepAttempted && !mapSelected && !addressValid ? 'border-destructive bg-destructive/5 focus-visible:border-destructive focus-visible:ring-destructive/20' : ''}`}
@@ -202,7 +221,7 @@ export function Denunciar() {
                   />
                   {stepAttempted && !mapSelected && !addressValid
                     ? <div id="address-error" className="text-sm text-destructive">Informe um endereço com pelo menos 5 caracteres ou selecione um ponto no mapa.</div>
-                    : <div id="address-help" className="text-sm text-slate-700 dark:text-slate-300">Informe uma rua, número ou referência próxima. Obrigatório se não selecionar um ponto no mapa.</div>}
+                    : <div id="address-help" className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">Informe uma rua, número ou referência próxima. Obrigatório se não selecionar um ponto no mapa.</div>}
                 </div>
                 <div className="space-y-3">
                   <MapPlaceholder selected={mapSelected} />

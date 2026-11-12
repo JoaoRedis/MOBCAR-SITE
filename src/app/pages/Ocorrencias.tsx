@@ -19,9 +19,9 @@ export function Ocorrencias() {
   );
 
   return (
-    <div className="bg-background px-6 py-12 md:py-16">
+    <div className="mobcar-page mobcar-page--occurrences bg-background px-6 py-12 md:py-16">
       <div className="mx-auto max-w-6xl space-y-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="mobcar-occurrences-heading flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <PageHeader
             eyebrow="Área do cidadão"
             title="Minhas ocorrências"
@@ -31,7 +31,7 @@ export function Ocorrencias() {
             <Link to="/denunciar"><FilePlus2 /> Nova ocorrência</Link>
           </Button>
         </div>
-        <Card>
+        <Card className="mobcar-occurrences-filters">
           <CardContent className="py-5">
             <div className="grid gap-4 md:grid-cols-[1fr_220px]">
               <div className="relative">
@@ -51,7 +51,7 @@ export function Ocorrencias() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="mobcar-occurrences-results">
           <CardContent className="pt-6">
             {visible.length ? (
               <Table>

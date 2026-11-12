@@ -14,6 +14,7 @@ import { OcorrenciaDetalhe } from './pages/OcorrenciaDetalhe';
 import { Notificacoes } from './pages/Notificacoes';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { AdminOcorrencia } from './pages/AdminOcorrencia';
+import { AdminUsuarios } from './pages/AdminUsuarios';
 import { Button } from './components/ui/button';
 import { Link } from 'react-router';
 
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
       { path: 'ocorrencias/:id', Component: OcorrenciaDetalhe },
       { path: 'notificacoes', Component: Notificacoes },
       { path: 'admin', Component: AdminDashboard },
+      { path: 'admin/usuarios', Component: AdminUsuarios },
       { path: 'admin/ocorrencias/:id', Component: AdminOcorrencia },
       {
         path: '*',

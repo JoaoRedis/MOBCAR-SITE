@@ -1,9 +1,10 @@
 packages:
   - '.'
 
-onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - esbuild
+allowBuilds:
+  '@tailwindcss/oxide': true
+  better-sqlite3: true
+  esbuild: true
 
 overrides:
   vite: 6.3.5

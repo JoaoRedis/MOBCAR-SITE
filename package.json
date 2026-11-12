@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "build": "vite build --config vite.figma.config.ts",
-    "dev": "vite --host 0.0.0.0 --config vite.figma.config.ts",
+    "dev": "concurrently -k -n api,web \"node --watch --env-file-if-exists=.env server/index.mjs\" \"vite --host 0.0.0.0 --config vite.figma.config.ts\"",
     "preview": "vite preview --config vite.figma.config.ts",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "bootstrap:admin": "node --env-file-if-exists=.env server/create-admin.mjs",
+    "test": "node --test server/admin-users.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -42,6 +45,11 @@
     "@radix-ui/react-toggle": "1.1.2",
     "@radix-ui/react-tooltip": "1.1.8",
     "canvas-confetti": "1.9.4",
+    "bcryptjs": "3.0.2",
+    "better-sqlite3": "12.2.0",
+    "express": "5.1.0",
+    "express-rate-limit": "8.1.0",
+    "helmet": "8.1.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
@@ -77,6 +85,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "oxfmt": "^0.2.0",
+    "concurrently": "9.2.1",
     "typescript": "^5.7.0"
   },
   "peerDependencies": {

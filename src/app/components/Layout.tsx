@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
-import { Bell, FilePlus2, LayoutDashboard, LogIn, Menu, UserRound, X } from 'lucide-react';
+import { Bell, FilePlus2, LayoutDashboard, LogIn, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
 import logo from '../../imports/image.png';
+import { useAuth } from '../auth/AuthProvider';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 
@@ -20,15 +21,24 @@ const footerLinks = [
 
 export function Layout() {
   const location = useLocation();
+  const { user, loading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [role, setRole] = useState(() => localStorage.getItem('mobcar-role'));
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => (
+    localStorage.getItem('mobcar-theme') === 'dark' ? 'dark' : 'light'
+  ));
   const isAdmin = location.pathname.startsWith('/admin');
+  const role = user?.role ?? null;
+  const restrictedLinks = role === 'admin'
+    ? [
+      { to: '/admin', label: 'Painel de análise' },
+      { to: '/admin/usuarios', label: 'Gerenciamento de Usuários' },
+    ]
+    : [{ to: '/admin', label: 'Visão geral' }];
 
   useEffect(() => {
-    const update = () => setRole(localStorage.getItem('mobcar-role'));
-    window.addEventListener('mobcar-auth', update);
-    return () => window.removeEventListener('mobcar-auth', update);
-  }, []);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('mobcar-theme', theme);
+  }, [theme]);
 
   useEffect(() => setMobileOpen(false), [location.pathname]);
 
@@ -50,22 +60,22 @@ export function Layout() {
       <a href="#main-content" className="sr-only z-[100] rounded-md bg-background px-4 py-2 text-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Ir para o conteúdo
       </a>
-      <header className={`sticky top-0 z-50 border-b px-5 py-3 shadow-sm ${isAdmin ? 'border-white/10 bg-primary text-white' : 'bg-white/95 text-foreground backdrop-blur'}`}>
+      <header className={`sticky top-0 z-50 border-b px-5 py-3 shadow-sm backdrop-blur ${isAdmin ? 'border-white/10 bg-primary text-white' : 'border-border/80 bg-background/90 text-foreground'}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <Link to="/" className="shrink-0" aria-label="MobCar — ir para a página inicial">
             <img src={logo} alt="MobCar" className={`h-11 w-auto object-contain ${isAdmin ? '' : 'rounded-lg bg-primary px-2'}`} />
           </Link>
           <nav aria-label="Navegação principal" className="hidden items-center gap-1 lg:flex">
-            {(isAdmin ? [{ to: '/admin', label: 'Visão geral' }] : mainLinks).map((link) => (
+            {(isAdmin ? restrictedLinks : mainLinks).map((link) => (
               <Button key={link.to} asChild variant="ghost" className={active(link.to) ? (isAdmin ? 'bg-white/10 text-white' : 'bg-secondary/20') : isAdmin ? 'text-slate-300 hover:bg-white/10 hover:text-white' : ''}>
                 <Link to={link.to} aria-current={active(link.to) ? 'page' : undefined}>{link.label}</Link>
               </Button>
             ))}
           </nav>
           <div className="hidden items-center gap-2 lg:flex">
-            {role === 'analyst' && (
+            {(role === 'analyst' || role === 'admin') && (
               <Button asChild variant={isAdmin ? 'secondary' : 'outline'} size="sm">
-                <Link to="/admin"><LayoutDashboard /> Área do analista</Link>
+                <Link to="/admin"><LayoutDashboard /> Área administrativa</Link>
               </Button>
             )}
             {role ? (
@@ -83,22 +93,47 @@ export function Layout() {
                 </Button>
               </>
             ) : (
-              <Button asChild variant="outline" size="sm" className={isAdmin ? 'border-white/30 bg-transparent text-white' : ''}>
+              <Button asChild variant="outline" size="sm" disabled={loading} className={isAdmin ? 'border-white/30 bg-transparent text-white' : ''}>
                 <Link to="/login"><LogIn /> Entrar</Link>
               </Button>
             )}
             {!isAdmin && (
               <Button asChild size="sm">
-                <Link to="/denunciar"><FilePlus2 /> Registrar</Link>
+                <Link to={role ? '/denunciar' : '/cadastro'}>
+                  {role ? <FilePlus2 /> : <UserRound />}
+                  {role ? 'Registrar' : 'Cadastrar'}
+                </Link>
               </Button>
             )}
+            <Button
+              variant={isAdmin ? 'ghost' : 'outline'}
+              size="icon"
+              onClick={() => setTheme((current) => current === 'light' ? 'dark' : 'light')}
+              aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+              title={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+              className={isAdmin ? 'text-white hover:bg-white/10 hover:text-white' : ''}
+            >
+              {theme === 'light' ? <Moon /> : <Sun />}
+            </Button>
           </div>
-          <Button variant="ghost" size="icon" className={`lg:hidden ${isAdmin ? 'text-white' : ''}`} onClick={() => setMobileOpen((value) => !value)} aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation">
-            {mobileOpen ? <X /> : <Menu />}
-          </Button>
+          <div className="flex items-center gap-1 lg:hidden">
+            <Button
+              variant={isAdmin ? 'ghost' : 'outline'}
+              size="icon"
+              onClick={() => setTheme((current) => current === 'light' ? 'dark' : 'light')}
+              aria-label={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+              title={theme === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}
+              className={isAdmin ? 'text-white hover:bg-white/10 hover:text-white' : ''}
+            >
+              {theme === 'light' ? <Moon /> : <Sun />}
+            </Button>
+            <Button variant="ghost" size="icon" className={isAdmin ? 'text-white' : ''} onClick={() => setMobileOpen((value) => !value)} aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation">
+              {mobileOpen ? <X /> : <Menu />}
+            </Button>
+          </div>
         </div>
         <nav id="mobile-navigation" aria-label="Navegação móvel" className={`mx-auto mt-3 max-w-7xl space-y-1 border-t pt-3 lg:hidden ${mobileOpen ? '' : 'hidden'}`}>
-            {(isAdmin ? [{ to: '/admin', label: 'Visão geral' }] : mainLinks).map((link) => (
+            {(isAdmin ? restrictedLinks : mainLinks).map((link) => (
               <Button key={link.to} asChild variant="ghost" className={`w-full justify-start ${isAdmin ? 'text-white hover:bg-white/10' : ''}`}>
                 <Link to={link.to} aria-current={active(link.to) ? 'page' : undefined}>{link.label}</Link>
               </Button>
@@ -111,14 +146,19 @@ export function Layout() {
                 <Link to="/notificacoes">Notificações</Link>
               </Button>
             )}
-            {role === 'analyst' && (
+            {(role === 'analyst' || role === 'admin') && (
               <Button asChild variant="ghost" className={`w-full justify-start ${isAdmin ? 'text-white' : ''}`}>
-                <Link to="/admin">Área do analista</Link>
+                <Link to="/admin">Área administrativa</Link>
+              </Button>
+            )}
+            {role === 'admin' && (
+              <Button asChild variant="ghost" className={`w-full justify-start ${isAdmin ? 'text-white' : ''}`}>
+                <Link to="/admin/usuarios">Gerenciamento de Usuários</Link>
               </Button>
             )}
         </nav>
       </header>
-      <main id="main-content" tabIndex={-1} className="flex-1"><Outlet /></main>
+      <main id="main-content" tabIndex={-1} className={location.pathname === '/' ? 'flex-1' : 'flex-1 mobcar-internal'}><Outlet /></main>
       {!isAdmin && (
         <footer className="border-t border-white/10 bg-primary px-6 py-12 text-[13px] text-white">
           <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.2fr_1fr_1fr]">

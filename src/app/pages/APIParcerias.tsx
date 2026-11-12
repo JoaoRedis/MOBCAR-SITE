@@ -51,9 +51,9 @@ const useCases = [
   { icon: Zap, title: 'Seguradoras', desc: 'Empresas de seguro utilizam dados estatísticos para precificação baseada em risco por região.' },
 ];
 
-const codeExample = `// Exemplo: buscar denúncias por Região Administrativa
+const codeExample = `// Endpoint demonstrativo; os registros são fictícios.
 const response = await fetch(
-  'https://api.mobcar.com.br/v1/denuncias?regiao_administrativa=Ceilândia&tipo=estacionamento',
+  '/api/v1/denuncias?regiao_administrativa=Plano%20Piloto&tipo=estacionamento',
   {
     headers: {
       'Authorization': 'Bearer SEU_TOKEN_AQUI',
@@ -63,7 +63,7 @@ const response = await fetch(
 );
 
 const data = await response.json();
-// { total: 1243, items: [...], page: 1 }`;
+// { total: 1, items: [...], page: 1, pageSize: 25, demonstracao: true }`;
 
 export function APIParcerias() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -89,7 +89,7 @@ export function APIParcerias() {
             API & <span className="text-[#D9A679]">Parcerias</span>
           </h1>
           <p className="text-gray-300 text-lg leading-relaxed max-w-2xl mx-auto">
-            Acesse dados sobre infrações de trânsito de forma estruturada e segura. Construa soluções de mobilidade, pesquisa ou segurança viária sobre nossa plataforma.
+            Consulte o endpoint demonstrativo de ocorrências de trânsito. Os registros desta versão são fictícios e servem apenas para testar a integração.
           </p>
         </div>
       </section>
@@ -105,6 +105,9 @@ export function APIParcerias() {
             <pre className="p-6 text-sm text-green-400 overflow-x-auto leading-relaxed" style={{ fontFamily: 'monospace' }}>
               {codeExample}
             </pre>
+            <p className="px-6 pb-5 text-xs text-gray-400">
+              Disponível no mesmo servidor em <code>/api/v1/denuncias</code>. Filtros: <code>regiao_administrativa</code>, <code>tipo</code>, <code>page</code> e <code>limit</code> (máximo 100).
+            </p>
           </div>
         </div>
       </section>
