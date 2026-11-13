@@ -520,7 +520,7 @@ export function Estatisticas() {
             <span className="h-1 w-16 rounded-full bg-[#D9954A]/80" />
           </div>
           <div className="relative max-w-3xl">
-            <h2 className="mb-2 text-lg font-semibold text-[#E4AD70]">Nota sobre privacidade</h2>
+            <h2 className="mb-2 text-lg font-semibold" style={{ color: '#D9954A' }}>Nota sobre privacidade</h2>
             <p className="text-sm leading-relaxed text-gray-300 sm:text-base">
               Os dados apresentados são fictícios, agregados e anônimos. Nenhuma informação pessoal ou sensível é exibida nesta página.
             </p>
