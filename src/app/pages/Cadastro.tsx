@@ -24,10 +24,19 @@ export function Cadastro() {
     createAdmin: false,
     adminSetupToken: '',
   });
+  const passwordBytes = new TextEncoder().encode(values.password).length;
   const errors = {
-    name: values.name.trim() ? '' : 'Informe seu nome completo.',
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email) ? '' : 'Informe um e-mail válido.',
-    password: values.password.length >= 12 ? '' : 'A senha deve ter pelo menos 12 caracteres.',
+    name: values.name.trim().length >= 2 && values.name.trim().length <= 120
+      ? ''
+      : 'Informe um nome com pelo menos 2 caracteres.',
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email) && values.email.length <= 254
+      ? ''
+      : 'Informe um e-mail válido (até 254 caracteres).',
+    password: values.password.length < 12
+      ? 'A senha deve ter pelo menos 12 caracteres.'
+      : passwordBytes > 72
+        ? 'A senha deve ter no máximo 72 bytes.'
+        : '',
     passwordConfirm: values.passwordConfirm === values.password && values.passwordConfirm
       ? ''
       : 'As senhas devem ser iguais.',
@@ -105,7 +114,7 @@ export function Cadastro() {
           <CardContent className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="name">Nome completo *</Label>
-              <Input id="name" value={values.name} onChange={(event) => setValues((current) => ({ ...current, name: event.target.value }))} aria-invalid={attempted && Boolean(errors.name)} aria-describedby={attempted && errors.name ? 'name-error' : undefined} required placeholder="Como você gostaria de ser identificado" />
+              <Input id="name" value={values.name} onChange={(event) => setValues((current) => ({ ...current, name: event.target.value }))} maxLength={120} aria-invalid={attempted && Boolean(errors.name)} aria-describedby={attempted && errors.name ? 'name-error' : undefined} required placeholder="Como você gostaria de ser identificado" />
               {attempted && errors.name && <div id="name-error" className="text-sm text-destructive">{errors.name}</div>}
             </div>
             <div className="space-y-2">
@@ -120,13 +129,13 @@ export function Cadastro() {
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="email">E-mail *</Label>
-              <Input id="email" type="email" value={values.email} onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))} aria-invalid={attempted && Boolean(errors.email)} aria-describedby={attempted && errors.email ? 'email-error' : undefined} required placeholder="voce@exemplo.com" />
+              <Input id="email" type="email" value={values.email} onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))} maxLength={254} aria-invalid={attempted && Boolean(errors.email)} aria-describedby={attempted && errors.email ? 'email-error' : undefined} required placeholder="voce@exemplo.com" />
               {attempted && errors.email && <div id="email-error" className="text-sm text-destructive">{errors.email}</div>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha *</Label>
               <div className="relative">
-                <Input id="password" type={showPassword ? 'text' : 'password'} className="pr-10" value={values.password} onChange={(event) => setValues((current) => ({ ...current, password: event.target.value }))} aria-invalid={attempted && Boolean(errors.password)} aria-describedby={attempted && errors.password ? 'password-error' : undefined} required placeholder="Defina uma senha" />
+                <Input id="password" type={showPassword ? 'text' : 'password'} className="pr-10" value={values.password} onChange={(event) => setValues((current) => ({ ...current, password: event.target.value }))} maxLength={72} aria-invalid={attempted && Boolean(errors.password)} aria-describedby={attempted && errors.password ? 'password-error' : undefined} required placeholder="Defina uma senha" />
                 <button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                   {showPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
                 </button>

@@ -15,21 +15,32 @@ export class ApiError extends Error {
 }
 
 async function request(path: string, init?: RequestInit): Promise<Response> {
-  const response = await fetch(path, {
-    credentials: 'same-origin',
-    cache: 'no-store',
-    ...init,
-    headers: {
-      Accept: 'application/json',
-      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init?.headers,
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(path, {
+      credentials: 'same-origin',
+      cache: 'no-store',
+      ...init,
+      headers: {
+        Accept: 'application/json',
+        ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+        ...init?.headers,
+      },
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new ApiError('Não foi possível conectar ao serviço de autenticação. Verifique se a API está disponível e tente novamente.', 0);
+    }
+    throw error;
+  }
 
   if (!response.ok) {
     const body = response.headers.get('content-type')?.includes('application/json')
       ? await response.json() as { error?: string }
       : null;
+    if (response.status === 404 && path.startsWith('/api/auth/')) {
+      throw new ApiError('O serviço de autenticação não está configurado neste endereço.', response.status);
+    }
     throw new ApiError(body?.error || 'Não foi possível concluir a solicitação.', response.status);
   }
   return response;
