@@ -14,11 +14,13 @@ export class ApiError extends Error {
   }
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ?? '';
+
 async function request(path: string, init?: RequestInit): Promise<Response> {
   let response: Response;
   try {
-    response = await fetch(path, {
-      credentials: 'same-origin',
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      credentials: 'include',
       cache: 'no-store',
       ...init,
       headers: {

@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: mobcar-api
+    runtime: node
+    plan: starter
+    buildCommand: corepack enable && corepack prepare pnpm@10.34.3 --activate && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /api/health
+    disk:
+      name: mobcar-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_PATH
+        value: /var/data/mobcar.sqlite
+      - key: APP_ORIGIN
+        value: https://joaoredis.github.io
+      - key: BOOTSTRAP_ADMIN_NAME
+        sync: false
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: INITIAL_ADMIN_SETUP_TOKEN
+        generateValue: true

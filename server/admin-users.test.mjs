@@ -452,6 +452,38 @@ test('common users cannot read or change permissions, and foreign origins are re
   assert.equal(csrfAttempt.status, 403);
 });
 
+test('production API supports credentialed CORS only for the configured site origin', async (t) => {
+  const { request } = await setup(t, { production: true });
+
+  const preflight = await request('/api/auth/login', {
+    method: 'OPTIONS',
+    headers: {
+      'Access-Control-Request-Method': 'POST',
+      'Access-Control-Request-Headers': 'content-type',
+    },
+  });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://localhost:5173');
+  assert.equal(preflight.headers.get('access-control-allow-credentials'), 'true');
+  assert.match(preflight.headers.get('access-control-allow-methods'), /POST/);
+  assert.match(preflight.headers.get('access-control-allow-headers'), /Content-Type/i);
+
+  const login = await request('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(adminCredentials),
+  });
+  assert.equal(login.status, 200);
+  assert.match(login.headers.get('set-cookie'), /SameSite=None/i);
+  assert.match(login.headers.get('set-cookie'), /Secure/i);
+
+  const foreignPreflight = await request('/api/auth/login', {
+    method: 'OPTIONS',
+    originHeader: 'https://malicious.example',
+    headers: { 'Access-Control-Request-Method': 'POST' },
+  });
+  assert.equal(foreignPreflight.headers.get('access-control-allow-origin'), null);
+});
+
 test('an administrator cannot be changed through the analyst promotion endpoint', async (t) => {
   const { request, login } = await setup(t);
   const adminCookie = await login(adminCredentials.email, adminCredentials.password);

@@ -1,11 +1,20 @@
 import { resolve } from 'node:path';
-import { createApp } from './app.mjs';
+import { createAdminAccount, createApp } from './app.mjs';
 
 const production = process.env.NODE_ENV === 'production';
 const host = process.env.HOST || (production ? '0.0.0.0' : '127.0.0.1');
 const allowDemoAdminSetup = !production && ['127.0.0.1', '::1', 'localhost'].includes(host);
+const dbPath = process.env.DATABASE_PATH || resolve('data/mobcar.sqlite');
+if (process.env.BOOTSTRAP_ADMIN_NAME || process.env.BOOTSTRAP_ADMIN_EMAIL || process.env.BOOTSTRAP_ADMIN_PASSWORD) {
+  await createAdminAccount({
+    dbPath,
+    name: process.env.BOOTSTRAP_ADMIN_NAME,
+    email: process.env.BOOTSTRAP_ADMIN_EMAIL,
+    password: process.env.BOOTSTRAP_ADMIN_PASSWORD,
+  });
+}
 const { app, db } = await createApp({
-  dbPath: process.env.DATABASE_PATH || resolve('data/mobcar.sqlite'),
+  dbPath,
   allowedOrigins: process.env.APP_ORIGIN
     ? [process.env.APP_ORIGIN]
     : ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:8443', 'http://127.0.0.1:8443'],

@@ -174,8 +174,18 @@ export async function createApp({
   app.use(express.json({ limit: '16kb' }));
   app.use('/api', (request, response, next) => {
     response.set('Cache-Control', 'no-store');
+    const requestOrigin = request.get('origin');
+    if (requestOrigin && origins.has(requestOrigin)) {
+      response.set('Access-Control-Allow-Origin', requestOrigin);
+      response.set('Access-Control-Allow-Credentials', 'true');
+      response.vary('Origin');
+      if (request.method === 'OPTIONS') {
+        response.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+        response.set('Access-Control-Allow-Headers', 'Content-Type');
+        return response.status(204).end();
+      }
+    }
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
-      const requestOrigin = request.get('origin');
       if (!requestOrigin || !origins.has(requestOrigin)) {
         return response.status(403).json({ error: 'Origem da solicitação não autorizada.' });
       }
@@ -230,7 +240,7 @@ export async function createApp({
 
   const cookieOptions = {
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: production ? 'none' : 'strict',
     secure: production,
     path: '/',
     maxAge: SESSION_DURATION_MS,
